@@ -24,7 +24,6 @@ class IterativeCordic(in_width: Int, in_frac: Int, n_stages: Int) extends Module
     val out_z       = Output(SInt(in_width.W))
     val out_busy    = Output(Bool())
   })
-  //TODO: Se deberia romper porque SInt no le da el rango
   val angles_rom = VecInit(Func.generate_angles(n_stages).map(
     x => math.round(x*math.pow(2,in_width)/(2*math.Pi)).asSInt(in_width.W))
   )
@@ -38,7 +37,6 @@ class IterativeCordic(in_width: Int, in_frac: Int, n_stages: Int) extends Module
   val y_reg = Reg(chiselTypeOf(io.in_y))
   val z_reg = Reg(chiselTypeOf(io.in_z))
 
-  //val sign = z_sig.head(1).asBool
   val sign = z_reg.head(1).asBool
   val in_sign = io.in_z.head(1).asBool
 
