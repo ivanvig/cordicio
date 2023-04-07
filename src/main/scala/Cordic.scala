@@ -11,12 +11,16 @@ object Func {
   }
 }
 
+object Mode extends ChiselEnum {
+  val RM, VM = Value
+}
+
 class IterativeCordic(in_width: Int, in_frac: Int, n_stages: Int) extends Module {
   val io = IO(new Bundle {
     val in_x        = Input(SInt(in_width.W))
     val in_y        = Input(SInt(in_width.W))
     val in_z        = Input(SInt(in_width.W))
-    //val in_vec_mode = Input(Bool())
+    val in_mode     = Input(Mode())
     val in_start    = Input(Bool())
 
     val out_x       = Output(SInt(in_width.W))
@@ -37,12 +41,12 @@ class IterativeCordic(in_width: Int, in_frac: Int, n_stages: Int) extends Module
   val y_reg = Reg(chiselTypeOf(io.in_y))
   val z_reg = Reg(chiselTypeOf(io.in_z))
 
-  val sign = z_reg.head(1).asBool
-  val in_sign = io.in_z.head(1).asBool
+  val sign = Mux(io.in_mode.asUInt.asBool, ~y_reg.head(1).asBool, z_reg.head(1).asBool)
+  val in_sign = Mux(io.in_mode.asUInt.asBool, ~io.in_y.head(1).asBool, io.in_z.head(1).asBool)
 
   val preproc_x = Mux(in_sign, io.in_y, -io.in_y)
   val preproc_y = Mux(in_sign, -io.in_x, io.in_x)
-  val preproc_z = Mux(in_sign, io.in_z + pi_over_two, io.in_z - pi_over_two)
+  val adjustment = Mux(in_sign, pi_over_two, -pi_over_two)
 
   val (stage, last_stage) = Counter(running, n_stages)
 
@@ -57,7 +61,7 @@ class IterativeCordic(in_width: Int, in_frac: Int, n_stages: Int) extends Module
 
   x_reg       := Mux(running, x_reg + sign_y, preproc_x)
   y_reg       := Mux(running, y_reg + sign_x, preproc_y)
-  z_reg       := Mux(running, z_reg + sign_ang, preproc_z)
+  z_reg       := Mux(running, z_reg + sign_ang, io.in_z + adjustment)
 
   running     := (io.in_start | running) & ~last_stage
 
