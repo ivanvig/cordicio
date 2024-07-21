@@ -18,7 +18,7 @@ class CordicTest extends AnyFlatSpec with ChiselScalatestTester with Matchers{
   val cordic_gain = 1.6467605
   behavior of "Cordic"
   it should "generate a sin and cos wave" in {
-    test(new IterativeCordic(16, 10, 10)).withAnnotations(Seq(WriteVcdAnnotation)) { dut => 
+    test(new IterativeCordic(16, 10, 15)).withAnnotations(Seq(WriteVcdAnnotation)) { dut => 
       val phi = DenseVector.tabulate(20){x => 2.0*Pi*x/20}
 
       dut.io.in_start.poke(true.B)
@@ -117,7 +117,7 @@ class CordicTest extends AnyFlatSpec with ChiselScalatestTester with Matchers{
 
         while( dut.io.out_busy.peekBoolean() ) { dut.clock.step() }
 
-        ((dut.io.out_z.peekInt().toDouble*2*Pi)/(pow(2,16))) should be (atan(num) +- 0.05)
+        ((dut.io.out_z.peekInt().toDouble*2*Pi)/(pow(2,16))) should be (atan(num) +- 0.005)
 
       }
     }
@@ -141,7 +141,7 @@ class CordicTest extends AnyFlatSpec with ChiselScalatestTester with Matchers{
         while( dut.io.out_busy.peekBoolean() ) { dut.clock.step() }
 
         dut.io.out_x.peekInt().toDouble/(cordic_gain*pow(2,10)) should be (expected_mag +- 0.005)
-        (2*Pi*dut.io.out_z.peekInt().toDouble/pow(2,16)) should be (expected_ang +- 0.05)
+        (2*Pi*dut.io.out_z.peekInt().toDouble/pow(2,16)) should be (expected_ang +- 0.005)
       }
     }
   }     
