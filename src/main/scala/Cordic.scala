@@ -70,3 +70,13 @@ class IterativeCordic(in_width: Int, in_frac: Int, n_stages: Int) extends Module
   io.out_y    := y_reg
   io.out_z    := z_reg
 }
+
+object Main extends App {
+  // These lines generate the Verilog output
+  new (chisel3.stage.ChiselStage).emitVerilog(
+    new IterativeCordic(16,10,15),
+    Array(
+      "--emission-options=disableMemRandomization,disableRegisterRandomization"
+    )
+  )
+}
