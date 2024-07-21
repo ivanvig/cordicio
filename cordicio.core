@@ -1,0 +1,34 @@
+CAPI=2:
+
+name: ivanvig:math:cordicio:0.1.0
+
+filesets:
+  chiselsrc:
+    depend: [fusesoc:utils:generators:0.1.7]
+
+generate:
+  chiselgen:
+    generator: chisel
+    parameters:
+      buildtool: sbt
+      copy_core: true
+      output:
+        files:
+          - IterativeCordic.v: { file_type: verilogSource }
+
+targets:
+  default:
+    filesets : [chiselsrc]
+    generate: [chiselgen]
+    
+  lint:
+    default_tool : verilator
+    description: Run static code checks using generated verilog sources (linting)
+    filesets : [chiselsrc]
+    generate: [chiselgen]
+    tools:
+      verilator:
+        mode : lint-only
+        verilator_options:
+          - "-Wall"
+    toplevel : IterativeCordic
