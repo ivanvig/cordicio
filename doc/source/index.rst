@@ -9,7 +9,7 @@ Cordicio documentation
 Cordicio is a `Chisel <https://github.com/chipsalliance/chisel>`_
 implementation of a `CORDIC <https://en.wikipedia.org/wiki/CORDIC>`_.
 
-It currently supports rotation and vectoring mode and works on any
+It currently supports rotation and vectoring mode in circular domain and works
 quadrant.
 
 Getting Started
