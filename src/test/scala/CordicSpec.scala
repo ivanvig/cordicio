@@ -15,7 +15,7 @@ import org.scalatest.matchers.should.Matchers
 import scala.collection.mutable.ArrayBuffer
 
 class CordicTest extends AnyFlatSpec with ChiselScalatestTester with Matchers{
-  val cordic_gain = 1.6467605
+  val cordic_gain = 1.64676025812107
   behavior of "Cordic"
   it should "generate a sin and cos wave" in {
     test(new IterativeCordic(16, 10, 20)).withAnnotations(Seq(WriteVcdAnnotation)) { dut => 
